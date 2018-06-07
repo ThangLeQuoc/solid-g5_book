@@ -16,16 +16,16 @@ import java.util.List;
 import main.entity.BookEntity;
 import main.entity.UserEntity;
 import main.exception.BusinessException;
-import main.service.BookBorrowingServiceBean;
+import main.service.BookServiceBean;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author AdNovum Informatik AG
  */
-public class BookBorrowingServiceTest {
+public class BookServiceTest {
 
-	private BookBorrowingServiceBean bookBorrowingService;
+	private BookServiceBean bookBorrowingService;
 
 	private UserEntity testUser;
 
@@ -58,7 +58,7 @@ public class BookBorrowingServiceTest {
 	public void setup() {
 		testUser = createDefaultTestUser();
 		addBooksToBookshelf();
-		bookBorrowingService = new BookBorrowingServiceBean();
+		bookBorrowingService = new BookServiceBean();
 	}
 
 	@Test

@@ -13,7 +13,7 @@ import main.exception.BusinessException;
 /**
  * @author AdNovum Informatik AG
  */
-public class BookBorrowingServiceBean {
+public class BookServiceBean {
 
 	private boolean checkIfBookCanBeBorrowed(BookEntity bookToBorrow) {
 		return !bookToBorrow.isBorrowed();
@@ -38,5 +38,14 @@ public class BookBorrowingServiceBean {
 		bookTitleToBorrow.add(book.getTitle());
 		user.setBorrowingBookTitles(bookTitleToBorrow);
 		book.setBorrowed(Boolean.TRUE);
+	}
+
+	public void returnBook(UserEntity user, BookEntity book) {
+		// check if user has that book
+
+		// get the book
+
+		// return it
+
 	}
 }
