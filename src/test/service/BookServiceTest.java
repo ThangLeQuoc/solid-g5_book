@@ -123,7 +123,7 @@ public class BookServiceTest {
 	}
 
 	@Test
-	public void returnBorrowedBook() {
+	public void testReturnBorrowedBook() {
 		// given: user borrowed 1 book
 		BookEntity bookToReturn = bookService.findBookByTitle(MASTERING_LINUX, bookshelf);
 		bookService.borrowBook(testUser, bookToReturn);
