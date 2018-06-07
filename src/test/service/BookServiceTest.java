@@ -86,7 +86,7 @@ public class BookServiceTest {
 		try {
 			// when:
 			bookService.borrowBook(testUser, lentBook);
-			fail();
+			fail("exception expected!");
 		}
 		catch (BusinessException e) {
 			// then:
