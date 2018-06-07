@@ -40,12 +40,9 @@ public class BookServiceBean {
 		book.setBorrowed(Boolean.TRUE);
 	}
 
-	public void returnBook(UserEntity user, BookEntity book) {
-		// check if user has that book
-
-		// get the book
-
-		// return it
-
+	public void returnBook(UserEntity user, BookEntity bookToReturn) {
+		List<String> borrowedBooks = user.getBorrowingBookTitles();
+		borrowedBooks.remove(bookToReturn.getTitle());
+		bookToReturn.setBorrowed(Boolean.FALSE);
 	}
 }

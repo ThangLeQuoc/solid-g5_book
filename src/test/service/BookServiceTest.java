@@ -25,7 +25,7 @@ import org.junit.Test;
  */
 public class BookServiceTest {
 
-	private BookServiceBean bookBorrowingService;
+	private BookServiceBean bookService;
 
 	private UserEntity testUser;
 
@@ -36,6 +36,7 @@ public class BookServiceTest {
 		user.setUserName("testUser");
 		user.setDepartment("Software Engineer");
 		user.setSeniorityLevel("Profesional Software Engineer");
+		user.setBorrowingBookTitles(new ArrayList<String>());
 		return user;
 	}
 
@@ -58,7 +59,7 @@ public class BookServiceTest {
 	public void setup() {
 		testUser = createDefaultTestUser();
 		addBooksToBookshelf();
-		bookBorrowingService = new BookServiceBean();
+		bookService = new BookServiceBean();
 	}
 
 	@Test
@@ -67,7 +68,7 @@ public class BookServiceTest {
 		String title = MASTERING_JAVA;
 
 		// when:
-		BookEntity bookFound = bookBorrowingService.findBookByTitle(title, bookshelf);
+		BookEntity bookFound = bookService.findBookByTitle(title, bookshelf);
 
 		// then:
 		assertNotNull(bookFound);
@@ -84,7 +85,7 @@ public class BookServiceTest {
 
 		try {
 			// when:
-			bookBorrowingService.borrowBook(testUser, lentBook);
+			bookService.borrowBook(testUser, lentBook);
 			fail();
 		}
 		catch (BusinessException e) {
@@ -93,19 +94,49 @@ public class BookServiceTest {
 		}
 	}
 
+	private void assertUpdateToBookshelf(List<BookEntity> bookshelf, BookEntity bookToUpdate) {
+		for (BookEntity book : bookshelf) {
+			if (book.getTitle().equalsIgnoreCase(bookToUpdate.getTitle())) {
+				assertEquals(bookToUpdate.isBorrowed(), book.isBorrowed());
+				return;
+			}
+		}
+		fail("There must be an update to the bookshelf");
+	}
+
 	@Test
 	public void testBorrowBook() {
-		// given:
-		UserEntity user = testUser;
-		String title = MASTERING_JAVA;
-		BookEntity bookToBorrow = bookBorrowingService.findBookByTitle(title, bookshelf);
+		// given: get the book from bookshelf
+		BookEntity bookToBorrow = bookService.findBookByTitle(MASTERING_JAVA, bookshelf);
 		assertNotNull(bookToBorrow);
+		assertFalse(bookToBorrow.isBorrowed());
 
-		// when:
-		bookBorrowingService.borrowBook(user, bookToBorrow);
+		// when: borrow that book
+		bookService.borrowBook(testUser, bookToBorrow);
 
 		// then:
-		assertEquals(title, bookToBorrow.getTitle());
+		assertEquals(MASTERING_JAVA, bookToBorrow.getTitle());
 		assertTrue(bookToBorrow.isBorrowed());
+		assertUpdateToBookshelf(bookshelf, bookToBorrow);
+		assertEquals(1, testUser.getBorrowingBookTitles().size());
+		assertEquals(MASTERING_JAVA, testUser.getBorrowingBookTitles().get(0));
+	}
+
+	@Test
+	public void returnBorrowedBook() {
+		// given: user borrowed 1 book
+		BookEntity bookToReturn = bookService.findBookByTitle(MASTERING_LINUX, bookshelf);
+		bookService.borrowBook(testUser, bookToReturn);
+		assertEquals(1, testUser.getBorrowingBookTitles().size());
+		assertTrue(bookToReturn.isBorrowed());
+
+		// when:
+		bookService.returnBook(testUser, bookToReturn);
+
+		// then:
+		bookToReturn = bookService.findBookByTitle(MASTERING_LINUX, bookshelf);
+		assertFalse(bookToReturn.isBorrowed());
+		assertEquals(0, testUser.getBorrowingBookTitles().size());
+		assertUpdateToBookshelf(bookshelf, bookToReturn);
 	}
 }
